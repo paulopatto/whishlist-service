@@ -1,0 +1,75 @@
+---
+name-template: 'v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+categories:
+  - title: '✨ Features'
+    labels:
+      - ':sparkles: feat'
+      - ':rotating_light: breaking-change'
+  - title: '🐞 Bug Fixes'
+    labels:
+      - 'fix'
+  - title: '🔧 Maintenance'
+    labels:
+      - 'chore'
+      - 'refactor'
+      - 'build'
+      - 'ci'
+      - 'docs'
+      - 'style'
+      - 'revert'
+      - 'test'
+      - 'perf'
+change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
+change-title-escapes: '\<*_&'
+version-resolver:
+  major:
+    labels:
+      - ':rotating_light: breaking-change'
+  minor:
+    labels:
+      - ':sparkles: feat'
+  patch:
+    labels:
+      - ':adhesive_bandage: fix'
+      - ':wrench: chore'
+      - 'refactor'
+      - 'build'
+      - 'ci'
+      - 'docs'
+      - 'style'
+      - 'revert'
+      - 'test'
+      - 'perf'
+  default: patch
+template: |
+  ## Changes on $REPOSITORY
+
+  $CHANGES
+autolabeler:
+  - label: ':rotating_light: breaking-change' # Or 'pr:breaking-change'
+    body: '/breaking change/i'
+    title: '/breaking change/i'
+  - label: ':sparkles: feat'
+    title: '/^feat/i'
+  - label: ':adhesive_bandage: fix'
+    title: '/^fix/i'
+  - label: ':wrench: chore'
+    title: '/^chore/i'
+  - label: ':hammer: refactor'
+    title: '/^refactor/i'
+  - label: ':construction_worker: build'
+    title: '/^build/i'
+  - label: ':whale: ci'
+    title: '/^ci/i'
+  - label: ':books: docs'
+    title: '/^docs/i'
+  - label: ':lipstick: style'
+    title: '/^style/i'
+  - label: ':fire: revert'
+    title: '/^revert/i'
+  - label: ':bulb: test'
+    title: '/^test/i'
+  - label: ':racehorse: perf'
+    title: '/^perf/i'
+
