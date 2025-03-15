@@ -24,5 +24,5 @@ pip install -r REQUIREMENTS
 3. Executar o servidor (modo dev)
 
 ```bash
-uvicorn main:app --reload
+uvicorn src.main:app --reload
 ```
