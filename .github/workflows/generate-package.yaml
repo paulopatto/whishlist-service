@@ -3,7 +3,9 @@ name: Release and Publish Docker Image
 
 on:
   release:
-    types: [published]
+    types:
+      - publish
+      - created
 
   workflow_dispatch:
     inputs:
@@ -37,32 +39,44 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract release tag
-        id: extract_release_tag
+      - name: Extract release tag and environment
+        id: extract_tags
         run: |
+          if [[ "${{ github.event.release.draft }}" == "true" ]]; then
+            ENV_SUFFIX="-rc"
+            LATEST_TAG="rc-latest"
+          else
+            ENV_SUFFIX=""
+            LATEST_TAG="latest"
+          fi
 
           if [[ -n "${{ github.event.inputs.tag }}" ]]; then
-            echo "::set-output name=tag::${{ github.event.inputs.tag }}"
+            TAG="${{ github.event.inputs.tag }}"
           elif [[ -n "${{ github.event.release.tag_name }}" ]]; then
-            echo "::set-output name=tag::${{ github.event.release.tag_name }}"
+            TAG="${{ github.event.release.tag_name }}"
           else
-            echo "::error title=Tag not found::No tag found in either github.event.inputs.tag or github.event.release.tag_name"
+            echo "::error title=Tag not found::No tag found"
             exit 1
           fi
 
-      - name: Build and tag Docker image with release version
+          echo "::set-output name=version_tag::${TAG}${ENV_SUFFIX}"
+          echo "::set-output name=latest_tag::${LATEST_TAG}"
+
+      - name: Build and push versioned image
         uses: docker/build-push-action@v3
         with:
           context: .
           platforms: linux/amd64,linux/arm64
-          tags: ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}:${{ steps.extract_release_tag.outputs.tag }}
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}:${{ steps.extract_tags.outputs.version_tag }}
           push: true
 
-      - name: Build and tag Docker image with 'latest' tag
+      - name: Build and push environment-specific latest image
         uses: docker/build-push-action@v3
         with:
           context: .
           platforms: linux/amd64,linux/arm64
-          tags: ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}:latest
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}:${{ steps.extract_tags.outputs.latest_tag }}
           push: true
 
