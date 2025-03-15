@@ -33,3 +33,15 @@ uvicorn src.main:app --reload
 docker build -t favorites-service:development .
 docker run -p 8000:8000 favorites-service:development
 ```
+
+3.2 Executar o servidor via docker localmente com docker-compose
+
+```bash
+docker-compose up
+```
+
+ou apenas o banco de dados
+
+```bash
+docker-compose up db
+```
