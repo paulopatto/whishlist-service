@@ -26,3 +26,10 @@ pip install -r REQUIREMENTS
 ```bash
 uvicorn src.main:app --reload
 ```
+
+3.1. Executar o servidor via docker localmente
+
+```bash
+docker build -t favorites-service:development .
+docker run -p 8000:8000 favorites-service:development
+```
