@@ -5,14 +5,14 @@ from fastapi import APIRouter, HTTPException
 
 from src.healthcheck.interfaces import IHealthCheckResult
 
-from .services import check_status, database_is_health
+from .services import database_is_health, server_is_health
 
 router = APIRouter()
 
 
 @router.get("/api/healthcheck", description="Check the health of the API")
 async def healthcheck():
-    webserver: IHealthCheckResult = check_status()
+    webserver: IHealthCheckResult = server_is_health()
     database: IHealthCheckResult = database_is_health()
 
     checks: List[IHealthCheckResult] = [webserver, database]

@@ -5,4 +5,4 @@ def describe_healthcheck_route():
         body = response.json()
 
         assert response.status_code == 200
-        assert body["status"] == "ok"
+        assert body["status"] == "Everything is ok"
