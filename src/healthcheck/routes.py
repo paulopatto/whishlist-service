@@ -1,3 +1,6 @@
+from dataclasses import asdict
+from typing import List
+
 from fastapi import APIRouter, HTTPException
 
 from src.healthcheck.interfaces import IHealthCheckResult
@@ -9,17 +12,13 @@ router = APIRouter()
 
 @router.get("/api/healthcheck", description="Check the health of the API")
 async def healthcheck():
-    status = check_status()
-    return { "status": "ok", "details": status }
+    webserver: IHealthCheckResult = check_status()
+    database: IHealthCheckResult = database_is_health()
 
+    checks: List[IHealthCheckResult] = [webserver, database]
 
-@router.get(
-    "/api/healthcheck/database",
-    description="Check the health of database connection"
-)
-async def check_database_connection():
-    status: IHealthCheckResult = database_is_health()
-    if not status.health:
-        raise HTTPException(status_code=503, detail=status.message)
-    return { "status": "ok", "details": status }
+    if any(not check.health for check in checks):
+        json_checks = [asdict(check) for check in checks]
+        raise HTTPException(status_code=503, detail=json_checks)
 
+    return { "status": "Everything is ok", "details": checks }

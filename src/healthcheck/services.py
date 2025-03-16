@@ -5,8 +5,8 @@ import psycopg2
 from src.healthcheck.interfaces import HealthCheckResultDTO, IHealthCheckResult
 
 
-def check_status():
-    return "Everything is ok"
+def check_status() -> IHealthCheckResult:
+    return HealthCheckResultDTO(health=True, message="Webserver is healthy")
 
 
 def database_is_health() -> IHealthCheckResult:
