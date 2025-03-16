@@ -48,3 +48,9 @@ docker-compose up db
 python -m pytest
 ```
 
+5. Running lints
+
+```bash
+ruff check . --select E,F,I --fix
+```
+
