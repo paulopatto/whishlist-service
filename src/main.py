@@ -10,6 +10,7 @@ ENVS_TO_LOAD_DOTENV = ["development", "test"]
 
 if PYTHON_ENV in ENVS_TO_LOAD_DOTENV:
     load_dotenv()
+    print(f"Loading environment variables from .env file for {PYTHON_ENV} environment")
 
 app = FastAPI()
 
