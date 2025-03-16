@@ -1,8 +1,9 @@
 import os
-from fastapi import FastAPI
-from src.healthcheck.routes import router as healthcheck_router
-from dotenv import load_dotenv
 
+from dotenv import load_dotenv
+from fastapi import FastAPI
+
+from src.healthcheck.routes import router as healthcheck_router
 
 PYTHON_ENV = os.getenv("PYTHON_ENV", "development")
 ENVS_TO_LOAD_DOTENV = ["development", "test"]
