@@ -1,3 +1,8 @@
 fastapi==0.115.11
+httpx
 uvicorn
 python-dotenv
+pytest
+pytest-describe
+pytest-spec
+
