@@ -6,4 +6,3 @@ def describe_healthcheck_route():
 
         assert response.status_code == 200
         assert body["status"] == "ok"
-

@@ -7,4 +7,3 @@ from src.main import app
 def test_client():
     with TestClient(app) as client:
         yield client
-
