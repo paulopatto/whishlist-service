@@ -58,12 +58,12 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        env:
-          DATABASE_URL: postgresql+psycopg2://${{ vars.DATABASE_USER }}:${{ secrets.DATABASE_PASSWORD }}@localhost:5432/${{ vars.DATABASE_NAME }}
         run: |
           python -m pip install --upgrade pip
           pip install -r REQUIREMENTS
 
       - name: Run tests with pytest
+        env:
+          DATABASE_URL: postgresql+psycopg2://${{ vars.DATABASE_USER }}:${{ secrets.DATABASE_PASSWORD }}@localhost:5432/${{ vars.DATABASE_NAME }}
         run: pytest
 
