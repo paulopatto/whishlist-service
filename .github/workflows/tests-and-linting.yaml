@@ -7,8 +7,30 @@ on:
       - main
 
 jobs:
-  test-and-lint:
-    name: Run Tests and Lint
+  lint:
+    name: Run lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        env:
+          DATABASE_URL: postgresql://${{ vars.DATABASE_USER }}:${{ secrets.DATABASE_PASSWORD }}@localhost:5432/${{ vars.DATABASE_NAME }}
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r REQUIREMENTS
+
+      - name: Run Ruff (lint check only)
+        run: ruff check --select E,F,I .
+
+  test:
+    name: Run tests
     runs-on: ubuntu-latest
 
     services:
@@ -21,7 +43,7 @@ jobs:
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U testuser -d testdb"
+          --health-cmd "pg_isready -U ${{ vars.DATABASE_USER }} -d ${{ vars.DATABASE_NAME }}"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 5
@@ -41,9 +63,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r REQUIREMENTS
-
-      - name: Run Ruff (lint check only)
-        run: ruff check --select E,F,I .
 
       - name: Run tests with pytest
         run: pytest
