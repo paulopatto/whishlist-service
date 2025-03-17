@@ -42,7 +42,7 @@ docker-compose up
 ou apenas o banco de dados
 
 ```bash
-docker-compose up db
+docker-compose up postgres
 ```
 
 4. Run tests
