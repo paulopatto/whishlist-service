@@ -7,14 +7,16 @@ from src.config.logger import AppLog as log
 from src.healthcheck.routes import router as healthcheck_router
 
 PYTHON_ENV = os.getenv("PYTHON_ENV", "development")
-ENVS_TO_LOAD_DOTENV = ["development", "test"]
 PORT = os.getenv("PORT", 8000)
 
-if PYTHON_ENV in ENVS_TO_LOAD_DOTENV:
-    load_dotenv()
-    log.debug(f""""
-        Loading environment variables from .env file for {PYTHON_ENV} environment
-    """)
+match PYTHON_ENV:
+    case "development":
+        load_dotenv(".env")
+    case "test":
+        load_dotenv(".env-test")
+    case _:
+        log.debug("Not loading .env file")
+
 
 app = FastAPI()
 
