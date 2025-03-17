@@ -1,6 +1,7 @@
 import os
 
-import psycopg2
+from sqlmodel import Session, create_engine
+from sqlalchemy.sql import text
 
 from src.healthcheck.interfaces import HealthCheckResultDTO, IHealthCheckResult
 
@@ -15,8 +16,10 @@ def database_is_health() -> IHealthCheckResult:
     if not DATABASE_URL:
         return HealthCheckResultDTO(health=False, message="DATABASE_URL not set")
     try:
-        conn = psycopg2.connect(DATABASE_URL)
-        conn.close()
+        engine = create_engine(DATABASE_URL)
+        with Session(engine) as session:
+            #DOC: https://stackoverflow.com/questions/54483184/sqlalchemy-warning-textual-column-expression-should-be-explicitly-declared
+            session.exec(text("SELECT 1"))
         return HealthCheckResultDTO(health=True, message="Database is healthy")
     except Exception as e:
         error_message = str(e)

@@ -11,7 +11,7 @@ PORT = os.getenv("PORT", 8000)
 
 if PYTHON_ENV in ENVS_TO_LOAD_DOTENV:
     load_dotenv()
-    log.info(f"Loading environment variables from .env file for {PYTHON_ENV} environment")
+    log.debug(f"Loading environment variables from .env file for {PYTHON_ENV} environment")
 
 app = FastAPI()
 
