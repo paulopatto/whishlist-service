@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
@@ -59,7 +59,7 @@ jobs:
 
       - name: Install dependencies
         env:
-          DATABASE_URL: postgresql://${{ vars.DATABASE_USER }}:${{ secrets.DATABASE_PASSWORD }}@localhost:5432/${{ vars.DATABASE_NAME }}
+          DATABASE_URL: postgresql+psycopg2://${{ vars.DATABASE_USER }}:${{ secrets.DATABASE_PASSWORD }}@localhost:5432/${{ vars.DATABASE_NAME }}
         run: |
           python -m pip install --upgrade pip
           pip install -r REQUIREMENTS
