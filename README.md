@@ -9,6 +9,9 @@ API REST para time de marketing de um e-commerce para lista de produtos favorito
 ```bash
 python -m venv .favorites.env
 source .favorites.env/bin/activate
+
+# Copiar o .env-sample e configurar os valores
+cp .env-sample .env
 ```
 
 2. Instalar as dependências
