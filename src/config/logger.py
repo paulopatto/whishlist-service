@@ -1,6 +1,7 @@
 import logging
 import sys
 
+
 class AppLogger:
     _instance = None
 

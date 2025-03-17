@@ -1,8 +1,9 @@
 import os
+
 from dotenv import load_dotenv
 from fastapi import FastAPI
-from src.config.logger import AppLog as log
 
+from src.config.logger import AppLog as log
 from src.healthcheck.routes import router as healthcheck_router
 
 PYTHON_ENV = os.getenv("PYTHON_ENV", "development")
@@ -11,7 +12,9 @@ PORT = os.getenv("PORT", 8000)
 
 if PYTHON_ENV in ENVS_TO_LOAD_DOTENV:
     load_dotenv()
-    log.debug(f"Loading environment variables from .env file for {PYTHON_ENV} environment")
+    log.debug(f""""
+        Loading environment variables from .env file for {PYTHON_ENV} environment
+    """)
 
 app = FastAPI()
 

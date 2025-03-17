@@ -1,7 +1,7 @@
 import os
 
-from sqlmodel import Session, create_engine
 from sqlalchemy.sql import text
+from sqlmodel import Session, create_engine
 
 from src.healthcheck.interfaces import HealthCheckResultDTO, IHealthCheckResult
 
