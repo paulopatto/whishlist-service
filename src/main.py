@@ -5,6 +5,7 @@ from fastapi import FastAPI
 
 from src.config.logger import AppLog as log
 from src.healthcheck.routes import router as healthcheck_router
+from src.customer.routes import router as customer_router
 
 PYTHON_ENV = os.getenv("PYTHON_ENV", "development")
 PORT = os.getenv("PORT", 8000)
@@ -22,6 +23,7 @@ app = FastAPI()
 
 
 app.include_router(healthcheck_router)
+app.include_router(customer_router)
 
 
 #TODO: Changes to use lifespan https://fastapi.tiangolo.com/advanced/events/#lifespan
