@@ -4,10 +4,11 @@ psycopg2-binary
 sqlmodel==0.0.24
 pydantic
 pydantic[email]
-python-dotenv
+click
 httpx
 pytest
 pytest-describe
 pytest-spec
+python-dotenv
 ruff
 
