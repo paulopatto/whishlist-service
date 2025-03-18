@@ -7,10 +7,10 @@ from src.healthcheck.interfaces import IHealthCheckResult
 
 from .services import database_is_health, server_is_health
 
-router = APIRouter()
+router = APIRouter(prefix="/api/healthcheck")
 
 
-@router.get("/api/healthcheck", description="Check the health of the API")
+@router.get("/", description="Check the health of the API")
 async def healthcheck():
     webserver: IHealthCheckResult = server_is_health()
     database: IHealthCheckResult = database_is_health()
@@ -21,4 +21,5 @@ async def healthcheck():
         json_checks = [asdict(check) for check in checks]
         raise HTTPException(status_code=503, detail=json_checks)
 
-    return { "status": "Everything is ok", "details": checks }
+    return {"status": "Everything is ok", "details": checks}
+
