@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 from pytest import fixture
-from sqlmodel import SQLModel, Session, create_engine
+from sqlmodel import Session, SQLModel, create_engine
 
 from src.config.database import MEMORY_DATABASE_URL, database_setup
 from src.main import app

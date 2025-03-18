@@ -1,9 +1,10 @@
 import os
-from src.config.logger import AppLog as log
 from typing import Annotated
-from fastapi import Depends
-from sqlmodel import SQLModel, Session, create_engine
 
+from fastapi import Depends
+from sqlmodel import Session, SQLModel, create_engine
+
+from src.config.logger import AppLog as log
 from src.customer.data import CustomerModel
 
 MEMORY_DATABASE_URL = "sqlite:///:memory:"

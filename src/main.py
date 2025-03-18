@@ -1,10 +1,11 @@
 import os
 
 from fastapi import FastAPI
+
 from src.config.envs import load_envs
 from src.config.logger import AppLog as log
-from src.healthcheck.routes import router as healthcheck_router
 from src.customer.routes import router as customer_router
+from src.healthcheck.routes import router as healthcheck_router
 
 load_envs()
 
