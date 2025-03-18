@@ -9,6 +9,7 @@ httpx
 pytest
 pytest-describe
 pytest-spec
+pytest-mock
 python-dotenv
 ruff
 
