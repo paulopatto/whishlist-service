@@ -12,4 +12,5 @@ pytest-spec
 pytest-mock
 python-dotenv
 ruff
-
+faker
+factory_boy

@@ -11,13 +11,13 @@ MEMORY_DATABASE_URL = "sqlite:///:memory:"
 DATABASE_URL = os.getenv("DATABASE_URL", MEMORY_DATABASE_URL)
 
 # FIXME: Remover isso para ir para produçao
-engine = create_engine(DATABASE_URL, echo=False)
+engine = create_engine(DATABASE_URL, echo=True)
 
 
 def database_setup():
     log.info("=== Setup database")
     log.info(f"ENV={os.getenv("PYTHON_ENV")}")
-    CustomerModel()
+    log.info(f"Registered tables: {SQLModel.metadata.tables.keys()}")
     SQLModel.metadata.create_all(engine)
     log.info("=== Setup database done.")
 
@@ -29,3 +29,4 @@ def get_session():
 
 SessionType = Annotated[Session, Depends(get_session)]
 
+list(map(lambda m: m.__table__, [CustomerModel]))
