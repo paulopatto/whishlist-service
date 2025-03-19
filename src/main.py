@@ -1,28 +1,26 @@
 import os
 
-from dotenv import load_dotenv
 from fastapi import FastAPI
 
+from src.config.envs import load_envs
 from src.config.logger import AppLog as log
+from src.customer.routes import router as customer_router
 from src.healthcheck.routes import router as healthcheck_router
 
-PYTHON_ENV = os.getenv("PYTHON_ENV", "development")
-ENVS_TO_LOAD_DOTENV = ["development", "test"]
-PORT = os.getenv("PORT", 8000)
+load_envs()
 
-if PYTHON_ENV in ENVS_TO_LOAD_DOTENV:
-    load_dotenv()
-    log.debug(f""""
-        Loading environment variables from .env file for {PYTHON_ENV} environment
-    """)
-
+PORT = os.getenv("API_PORT", 8000)
+PY_ENV = os.getenv("PYTHON_ENV", "dev")
 app = FastAPI()
 
 
 app.include_router(healthcheck_router)
+app.include_router(customer_router)
 
 
-#TODO: Changes to use lifespan https://fastapi.tiangolo.com/advanced/events/#lifespan
+# TODO: Changes to use lifespan
+# https://fastapi.tiangolo.com/advanced/events/#lifespan
 @app.on_event("startup")
 async def startup_event():
-    log.info(f"🚀 Starting up Whishlist Service in {PYTHON_ENV} mode at port {PORT}...")
+    log.info(f"🚀 Starting up whishlist  in {PY_ENV} mode at port {PORT}...")
+
