@@ -1,38 +1,16 @@
-from fastapi import APIRouter
-from fastapi.exceptions import HTTPException
-
-from src.config.database import SessionType
-from src.config.logger import AppLog as log
-from src.customer.data import CustomerDTO as Customer
-from src.customer.services import create_customer
-
-router = APIRouter(prefix="/api/customer")
-
-
-@router.post(
-    "/", status_code=201,
-    description="Creates new customers",
-    response_model=Customer,
-    tags=["Customer"]
-)
-async def create(customer: Customer, session: SessionType) -> Customer:
-    try:
-        service_response: Customer = await create_customer(customer, session)
-        return service_response
-    except Exception as e:
-        log.error(f"Erro: {e}")
-        raise HTTPException(
-            status_code=422,
-            detail="Erro during create user",
-        )
-
-from fastapi import APIRouter, HTTPException
 from uuid import UUID
 
+from fastapi import APIRouter, HTTPException
+
 from src.config.database import SessionType
 from src.config.logger import AppLog as log
 from src.customer.data import CustomerDTO as Customer
-from src.customer.services import create_customer, delete_customer, update_customer, get_customer
+from src.customer.services import (
+    create_customer,
+    delete_customer,
+    fetch_customer,
+    update_customer,
+)
 
 router = APIRouter(prefix="/api/customer")
 
@@ -50,7 +28,7 @@ async def create(customer: Customer, session: SessionType) -> Customer:
     except Exception as e:
         log.error(f"Erro: {e}")
         raise HTTPException(
-            status_code=422,
+            status_code=409,
             detail="Erro during create user",
         )
 
@@ -85,7 +63,11 @@ async def delete(external_id: UUID, session: SessionType):
     response_model=Customer,
     tags=["Customer"]
 )
-async def update(external_id: UUID, customer: Customer, session: SessionType) -> Customer:
+async def update(
+    external_id: UUID,
+    customer: Customer,
+    session: SessionType
+) -> Customer:
     try:
         customer.id = external_id  # Ensure the ID matches the path parameter
         service_response: Customer = await update_customer(customer, session)
@@ -105,15 +87,16 @@ async def update(external_id: UUID, customer: Customer, session: SessionType) ->
 
 
 @router.get(
-    "/{external_id}",
+    "/{identifier}",
     status_code=200,
-    description="Retrieves a customer by ID",
+    description="Retrieves a customer by ID or email",
     response_model=Customer,
     tags=["Customer"]
 )
-async def get(external_id: UUID, session: SessionType) -> Customer:
+async def get(identifier: str, session: SessionType) -> Customer:
     try:
-        service_response: Customer = await get_customer(external_id, session)
+        sanitized_identifier = sanitize_identifier(identifier)
+        service_response: Customer = await fetch_customer(sanitized_identifier, session)
         return service_response
     except ValueError as e:
         log.error(f"Erro: {e}")
@@ -127,3 +110,11 @@ async def get(external_id: UUID, session: SessionType) -> Customer:
             status_code=500,
             detail="Erro during get user",
         )
+
+
+
+def sanitize_identifier(identifier: str) -> UUID | str:
+    try:
+        return UUID(identifier)
+    except ValueError:
+        return identifier

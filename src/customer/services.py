@@ -1,9 +1,11 @@
 from uuid import UUID
 
 from sqlmodel import select
+
 from src.config.database import SessionType
 from src.config.logger import AppLog as log
 from src.customer.data import CustomerDTO, CustomerModel
+
 
 #TODO: Pensar em como remover essas duplicação de código
 async def create_customer(data: CustomerDTO, session: SessionType) -> CustomerDTO:
@@ -25,7 +27,11 @@ async def create_customer(data: CustomerDTO, session: SessionType) -> CustomerDT
 async def delete_customer(external_id: UUID, session: SessionType) -> None:
     try:
         with session:
-            statement = select(CustomerModel).where(CustomerModel.external_id == external_id)
+            statement = select(
+                CustomerModel
+            ).where(
+                CustomerModel.external_id == external_id
+            )
             result = session.exec(statement)
             customer = result.one_or_none()
 
@@ -36,13 +42,19 @@ async def delete_customer(external_id: UUID, session: SessionType) -> None:
             session.commit()
     except Exception as e:
         error_message = str(e)
-        log.error(f"Error during deletion of customer {external_id} due {error_message}")
+        log.error(
+            f"Error during deletion of customer {external_id} due {error_message}"
+        )
         raise e
 
 async def update_customer(data: CustomerDTO, session: SessionType) -> CustomerDTO:
     try:
         with session:
-            statement = select(CustomerModel).where(CustomerModel.external_id == data.id)
+            statement = select(
+                CustomerModel
+            ).where(
+                CustomerModel.external_id == data.id
+            )
             result = session.exec(statement)
             customer = result.one_or_none()
 
@@ -63,15 +75,30 @@ async def update_customer(data: CustomerDTO, session: SessionType) -> CustomerDT
         log.error(f"Error during update of customer {data.id} due {error_message}")
         raise e
 
-async def get_customer(external_id: UUID, session: SessionType) -> CustomerDTO:
+async def fetch_customer(identifier: str | UUID, session: SessionType) -> CustomerDTO:
+    """
+    Fetch a customer by external_id (UUID) or email (str).
+    """
     try:
         with session:
-            statement = select(CustomerModel).where(CustomerModel.external_id == external_id)
-            result = session.exec(statement)
+            if isinstance(identifier, UUID):
+                query = select(
+                    CustomerModel
+                ).where(
+                    CustomerModel.external_id == identifier
+                )
+            else:
+                query = select(
+                    CustomerModel
+                ).where(
+                    CustomerModel.email == identifier
+                )
+
+            result = session.exec(query)
             customer = result.one_or_none()
 
             if not customer:
-                raise ValueError(f"Customer with ID {external_id} not found")
+                raise ValueError(f"Customer with ID {identifier} not found")
 
             return CustomerDTO(
                 id=customer.external_id,
@@ -80,5 +107,7 @@ async def get_customer(external_id: UUID, session: SessionType) -> CustomerDTO:
             )
     except Exception as e:
         error_message = str(e)
-        log.error(f"Error during retrieval of customer {external_id} due {error_message}")
+        log.error(
+            f"Error during retrieval of customer {identifier} due {error_message}"
+        )
         raise e
