@@ -1,7 +1,10 @@
 from sqlmodel import select
 
 from src.customer.data import CustomerModel
-from tests.customer.routes_helpers import helper_arrange_customer_at_database_to_edit, helper_request_patch_to_update_customer
+from tests.customer.routes_helpers import (
+    helper_arrange_customer_at_database_to_edit,
+    helper_request_patch_to_update_customer,
+)
 
 
 def describe_customer_creation():
@@ -67,11 +70,14 @@ def describe_customer_creation():
 def describe_customer_deletion():
     def describe_when_pass_external_id_not_existent_params():
         """"
-        Tenho de confesar que esse teste aqui o copilot sugeriu e ai Eu incluí, não me elimina por causa disso.
+        Tenho de confesar que esse teste aqui o copilot sugeriu e ai
+        Eu incluí, não me elimina por causa disso.
         """
         def should_returns_not_found(test_client, session):
             # Act
-            response = test_client.delete("/api/customer/123e4567-e89b-12d3-a456-426614174000")
+            response = test_client.delete(
+                "/api/customer/123e4567-e89b-12d3-a456-426614174000"
+            )
 
             # Assert
             assert response.status_code == 404
@@ -107,11 +113,15 @@ def describe_customer_deletion():
             external_id = customer.external_id
 
         # Act
-        response = test_client.delete(f"/api/customer/{external_id}")
+        _ = test_client.delete(f"/api/customer/{external_id}")
 
         # Assert
         with session:
-            statement = select(CustomerModel).where(CustomerModel.external_id == external_id)
+            statement = select(
+                CustomerModel
+            ).where(
+                CustomerModel.external_id == external_id
+            )
             result = session.exec(statement).first()
             assert result is None
 
@@ -120,30 +130,56 @@ def describe_customer_update():
         def describe_when_pass_new_data_to_update():
             def should_returns_200_ok(test_client, session, valid_customer):
                 # Arrange
-                eid = helper_arrange_customer_at_database_to_edit(session, valid_customer)
+                eid = helper_arrange_customer_at_database_to_edit(
+                    session,
+                    valid_customer
+                )
                 new_data = {
                     "name": "Updated Name",
                     "email": valid_customer.email  # Mantém o mesmo email
                 }
                 # Act
-                response = helper_request_patch_to_update_customer(test_client, session, valid_customer, eid, data_to_update=new_data)
+                response = helper_request_patch_to_update_customer(
+                    test_client,
+                    session,
+                    valid_customer,
+                    eid,
+                    data_to_update=new_data
+                )
                 # Assert
                 assert response.status_code == 200
 
-            def should_update_customer_name_at_database(test_client, session, valid_customer):
+            def should_update_customer_name_at_database(
+                    test_client,
+                    session,
+                    valid_customer
+                ):
                 # Arrange
-                eid = helper_arrange_customer_at_database_to_edit(session, valid_customer)
+                eid = helper_arrange_customer_at_database_to_edit(
+                    session,
+                    valid_customer
+                )
                 new_data = {
                     "name": "Updated Name",
                     "email": valid_customer.email  # Mantém o mesmo email
                 }
 
                 #Act
-                response = helper_request_patch_to_update_customer(test_client, session, valid_customer, eid, data_to_update=new_data)
+                _ = helper_request_patch_to_update_customer(
+                    test_client,
+                    session,
+                    valid_customer,
+                    eid,
+                    data_to_update=new_data
+                )
 
                 # Assert
                 with session:
-                    statement = select(CustomerModel).where(CustomerModel.external_id == eid)
+                    statement = select(
+                        CustomerModel
+                    ).where(
+                        CustomerModel.external_id == eid
+                    )
                     result = session.exec(statement).one_or_none()
                     assert result is not None
                     assert result.name == new_data["name"]
@@ -152,7 +188,9 @@ def describe_fetch_customer():
     def describe_when_customer_not_exists():
         def should_returns_not_found(test_client, session):
             # Act
-            response = test_client.get("/api/customer/123e4567-e89b-12d3-a456-426614174000")
+            response = test_client.get(
+                "/api/customer/123e4567-e89b-12d3-a456-426614174000"
+            )
             # Assert
             assert response.status_code == 404
 
@@ -196,7 +234,11 @@ def describe_fetch_customer():
             assert response_data["name"] == valid_customer.name
             assert response_data["email"] == valid_customer.email
 
-        def should_return_customer_data_if_find_by_email(test_client, session, valid_customer):
+        def should_return_customer_data_if_find_by_email(
+                test_client,
+                session,
+                valid_customer
+            ):
             # Arrange
             with session:
                 customer = CustomerModel(
