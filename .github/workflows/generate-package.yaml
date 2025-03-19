@@ -3,9 +3,7 @@ name: Release and Publish Docker Image
 
 on:
   release:
-    types:
-      - publish
-      - created
+    types: [published, created]
 
   workflow_dispatch:
     inputs:
