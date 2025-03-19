@@ -1,14 +1,18 @@
 import os
 from typing import Annotated
 
+
 from fastapi import Depends
 from sqlmodel import Session, SQLModel, create_engine
 
+from src.config.envs import load_envs
 from src.config.logger import AppLog as log
 from src.customer.data import CustomerModel
 
 MEMORY_DATABASE_URL = "sqlite:///:memory:"
-DATABASE_URL = os.getenv("DATABASE_URL", MEMORY_DATABASE_URL)
+#DATABASE_URL = "postgresql+psycopg2://whishlist_user:kfp_KTH6hct0gwezqp@0.0.0.0:5432/whishlist_development"
+load_envs()
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 # FIXME: Remover isso para ir para produçao
 engine = create_engine(DATABASE_URL, echo=True)
