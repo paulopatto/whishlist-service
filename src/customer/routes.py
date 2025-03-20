@@ -3,9 +3,9 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException
 
 from src.auth.middlewares import validate_token
-from src.config.database import SessionType
 from src.config.logger import AppLog as log
 from src.customer.data import CustomerDTO as Customer
+from src.customer.data import CustomerRepository, get_customer_repository
 from src.customer.services import (
     create_customer,
     delete_customer,
@@ -17,14 +17,20 @@ router = APIRouter(prefix="/api/customer", dependencies=[Depends(validate_token)
 
 
 @router.post(
-    "/", status_code=201,
+    "/",
+    status_code=201,
     description="Creates new customers",
     response_model=Customer,
-    tags=["Customer"]
+    tags=["Customer"],
 )
-async def create(customer: Customer, session: SessionType) -> Customer:
+async def create(
+    customer: Customer,
+    repository: CustomerRepository = Depends(get_customer_repository)
+) -> Customer:
     try:
-        service_response: Customer = await create_customer(customer, session)
+        service_response: Customer = await create_customer(
+            customer, repository=repository
+        )
         return service_response
     except Exception as e:
         log.error(f"Erro: {e}")
@@ -38,11 +44,13 @@ async def create(customer: Customer, session: SessionType) -> Customer:
     "/{external_id}",
     status_code=204,
     description="Deletes a customer by ID",
-    tags=["Customer"]
+    tags=["Customer"],
 )
-async def delete(external_id: UUID, session: SessionType):
+async def delete(
+    external_id: UUID, repository: CustomerRepository = Depends(get_customer_repository)
+) -> None:
     try:
-        await delete_customer(external_id, session)
+        await delete_customer(external_id, repository)
     except ValueError as e:
         log.error(f"Erro: {e}")
         raise HTTPException(
@@ -62,16 +70,16 @@ async def delete(external_id: UUID, session: SessionType):
     status_code=200,
     description="Updates a customer by ID",
     response_model=Customer,
-    tags=["Customer"]
+    tags=["Customer"],
 )
 async def update(
     external_id: UUID,
     customer: Customer,
-    session: SessionType
+    repository: CustomerRepository = Depends(get_customer_repository),
 ) -> Customer:
     try:
         customer.id = external_id  # Ensure the ID matches the path parameter
-        service_response: Customer = await update_customer(customer, session)
+        service_response: Customer = await update_customer(customer, repository)
         return service_response
     except ValueError as e:
         log.error(f"Erro: {e}")
@@ -92,12 +100,16 @@ async def update(
     status_code=200,
     description="Retrieves a customer by ID or email",
     response_model=Customer,
-    tags=["Customer"]
+    tags=["Customer"],
 )
-async def get(identifier: str, session: SessionType) -> Customer:
+async def get(
+    identifier: str, repository: CustomerRepository = Depends(get_customer_repository)
+) -> Customer:
     try:
         sanitized_identifier = sanitize_identifier(identifier)
-        service_response: Customer = await fetch_customer(sanitized_identifier, session)
+        service_response: Customer = await fetch_customer(
+            sanitized_identifier, repository=repository
+        )
         return service_response
     except ValueError as e:
         log.error(f"Erro: {e}")
@@ -107,11 +119,11 @@ async def get(identifier: str, session: SessionType) -> Customer:
         )
     except Exception as e:
         log.error(f"Erro: {e}")
+        error_message = str(e)
         raise HTTPException(
             status_code=500,
-            detail="Erro during get user",
+            detail=f"Erro during get user due {error_message}",
         )
-
 
 
 def sanitize_identifier(identifier: str) -> UUID | str:
@@ -119,3 +131,4 @@ def sanitize_identifier(identifier: str) -> UUID | str:
         return UUID(identifier)
     except ValueError:
         return identifier
+

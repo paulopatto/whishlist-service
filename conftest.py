@@ -3,8 +3,9 @@ from pytest import fixture
 from sqlmodel import Session, SQLModel, create_engine
 
 from factories import CustomerFactory, InvalidUserFactory
-from src.config.database import DATABASE_URL, database_setup
+from src.config.database import DATABASE_URL
 from src.config.envs import load_envs
+from src.config.tables import database_setup
 from src.main import app
 
 load_envs("test")
