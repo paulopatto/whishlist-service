@@ -3,8 +3,8 @@ import os
 from fastapi import FastAPI
 
 from src.auth.middlewares import BearerTokenMiddleware
-from src.config.logger import AppLog as log
 from src.config.envs import load_envs
+from src.config.logger import AppLog as log
 from src.customer.routes import router as customer_router
 from src.healthcheck.routes import router as healthcheck_router
 

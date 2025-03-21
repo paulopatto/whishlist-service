@@ -1,11 +1,11 @@
 import os
-from fastapi import Depends, HTTPException, Request
-from fastapi import security
+
+from fastapi import Depends, HTTPException, Request, security
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from starlette.middleware.base import BaseHTTPMiddleware
 
-security = HTTPBearer()
+security = HTTPBearer() # noqa
 
 class BearerTokenMiddleware(BaseHTTPMiddleware):
     """
@@ -26,7 +26,9 @@ class BearerTokenMiddleware(BaseHTTPMiddleware):
         if not auth_header or not auth_header.startswith("Bearer "):
             return JSONResponse(
                 status_code=401,
-                content={"message": "Unauthorized - Bearer token is missing or inválid"},
+                content={
+                    "message": "Unauthorized - Bearer token is missing or inválid"
+                },
             )
 
         token = auth_header.split(" ")[1]
