@@ -14,3 +14,5 @@ python-dotenv
 ruff
 faker
 factory_boy
+requests
+starlette
