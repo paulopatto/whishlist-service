@@ -1,7 +1,8 @@
 from uuid import UUID
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
+from src.auth.middlewares import validate_token
 from src.config.database import SessionType
 from src.config.logger import AppLog as log
 from src.customer.data import CustomerDTO as Customer
@@ -12,7 +13,7 @@ from src.customer.services import (
     update_customer,
 )
 
-router = APIRouter(prefix="/api/customer")
+router = APIRouter(prefix="/api/customer", dependencies=[Depends(validate_token)])
 
 
 @router.post(

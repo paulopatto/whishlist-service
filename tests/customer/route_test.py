@@ -15,7 +15,8 @@ def describe_customer_creation():
                 json={
                     "name": valid_customer.name,
                     "email": valid_customer.email
-                }
+                },
+                headers={ "Authorization": "Bearer valid_api_key" }
             )
             assert response.status_code == 201
 
@@ -26,7 +27,8 @@ def describe_customer_creation():
                 json={
                     "name": valid_customer.name,
                     "email": valid_customer.email
-                }
+                },
+                headers={ "Authorization": "Bearer valid_api_key" }
             )
             # Act
             with session:
@@ -49,7 +51,8 @@ def describe_customer_creation():
                 json={
                     "name": valid_customer.name,
                     "email": valid_customer.email
-                }
+                },
+                headers={ "Authorization": "Bearer valid_api_key" }
             )
             # Act
             response = test_client.post(
@@ -57,14 +60,19 @@ def describe_customer_creation():
                 json={
                     "name": valid_customer.name,
                     "email": valid_customer.email
-                }
+                },
+                headers={ "Authorization": "Bearer valid_api_key" }
             )
             # Assert
             assert response.status_code == 409
 
     def describe_when_not_pass_correct_params():
         def should_returns_unprocessed_entity(test_client, session):
-            response = test_client.post("/api/customer", json={})
+            response = test_client.post(
+                "/api/customer",
+                json={},
+                headers={ "Authorization": "Bearer valid_api_key" }
+            )
             assert response.status_code == 422
 
 def describe_customer_deletion():
@@ -76,7 +84,8 @@ def describe_customer_deletion():
         def should_returns_not_found(test_client, session):
             # Act
             response = test_client.delete(
-                "/api/customer/123e4567-e89b-12d3-a456-426614174000"
+                "/api/customer/123e4567-e89b-12d3-a456-426614174000",
+                headers={ "Authorization": "Bearer valid_api_key" }
             )
 
             # Assert
@@ -95,7 +104,10 @@ def describe_customer_deletion():
             external_id = customer.external_id
 
         # Act
-        response = test_client.delete(f"/api/customer/{external_id}")
+        response = test_client.delete(
+            f"/api/customer/{external_id}",
+            headers={ "Authorization": "Bearer valid_api_key" }
+        )
 
         # Assert
         assert response.status_code == 204
@@ -113,7 +125,10 @@ def describe_customer_deletion():
             external_id = customer.external_id
 
         # Act
-        _ = test_client.delete(f"/api/customer/{external_id}")
+        _ = test_client.delete(
+            f"/api/customer/{external_id}",
+            headers={ "Authorization": "Bearer valid_api_key" }
+        )
 
         # Assert
         with session:
@@ -189,7 +204,8 @@ def describe_fetch_customer():
         def should_returns_not_found(test_client, session):
             # Act
             response = test_client.get(
-                "/api/customer/123e4567-e89b-12d3-a456-426614174000"
+                "/api/customer/123e4567-e89b-12d3-a456-426614174000",
+                headers={ "Authorization": "Bearer valid_api_key" }
             )
             # Assert
             assert response.status_code == 404
@@ -208,7 +224,10 @@ def describe_fetch_customer():
                 external_id = customer.external_id
 
             # Act
-            response = test_client.get(f"/api/customer/{external_id}")
+            response = test_client.get(
+                f"/api/customer/{external_id}",
+                headers={ "Authorization": "Bearer valid_api_key" }
+            )
 
             # Assert
             assert response.status_code == 200
@@ -226,7 +245,10 @@ def describe_fetch_customer():
                 external_id = customer.external_id
 
             # Act
-            response = test_client.get(f"/api/customer/{external_id}")
+            response = test_client.get(
+                f"/api/customer/{external_id}",
+                headers={ "Authorization": "Bearer valid_api_key" }
+            )
 
             # Assert
             response_data = response.json()
@@ -251,7 +273,10 @@ def describe_fetch_customer():
                 external_id = customer.external_id
 
             # Act
-            response = test_client.get(f"/api/customer/{customer.email}")
+            response = test_client.get(
+                f"/api/customer/{customer.email}",
+                headers={ "Authorization": "Bearer valid_api_key" }
+            )
 
             # Assert
             response_data = response.json()

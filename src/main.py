@@ -2,6 +2,7 @@ import os
 
 from fastapi import FastAPI
 
+from src.auth.middlewares import BearerTokenMiddleware
 from src.config.envs import load_envs
 from src.config.logger import AppLog as log
 from src.customer.routes import router as customer_router
@@ -13,9 +14,9 @@ PORT = os.getenv("API_PORT", 8000)
 PY_ENV = os.getenv("PYTHON_ENV", "dev")
 app = FastAPI()
 
-
 app.include_router(healthcheck_router)
 app.include_router(customer_router)
+app.add_middleware(BearerTokenMiddleware)
 
 
 # TODO: Changes to use lifespan
