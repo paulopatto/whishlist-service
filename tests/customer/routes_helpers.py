@@ -22,5 +22,6 @@ def helper_request_patch_to_update_customer(
     ):
     return test_client.patch(
         f"/api/customer/{external_id}",
-        json=data_to_update
+        json=data_to_update,
+        headers={ "Authorization": "Bearer valid_api_key" }
     )
