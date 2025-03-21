@@ -2,6 +2,9 @@
 
 API REST para time de marketing de um e-commerce para lista de produtos favoritos dos clientes
 
+
+Documentação da API disponível em: http://localhost:8000/docs
+
 ## Development
 
 1. Criar um ambiente virtual python
@@ -36,13 +39,17 @@ docker run -p 8000:8000 favorites-service:development
 3.2 Executar o servidor via docker localmente com docker-compose
 
 ```bash
-docker-compose up
+docker-compose up -d
 ```
 
-ou apenas o banco de dados
+ou apenas alguns serviços específicos:
 
 ```bash
-docker-compose up postgres
+# Banco de dados
+docker-compose up postgres -d
+
+# API de produtos
+docker-compose up product-api -d
 ```
 
 4. Run tests

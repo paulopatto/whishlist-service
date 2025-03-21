@@ -13,7 +13,10 @@ from src.customer.services import (
     update_customer,
 )
 
-router = APIRouter(prefix="/api/customer", dependencies=[Depends(validate_token)])
+router = APIRouter(
+    prefix="/api/customer",
+    dependencies=[Depends(validate_token)]
+)
 
 
 @router.post(

@@ -7,8 +7,8 @@ from src.config.envs import load_envs
 from src.config.logger import AppLog as log
 from src.config.tables import database_setup, rebuild_models
 from src.customer.routes import router as customer_router
-from src.healthcheck.routes import router as healthcheck_router
 from src.favorites.routes import router as favorites_router
+from src.healthcheck.routes import router as healthcheck_router
 
 load_envs()
 

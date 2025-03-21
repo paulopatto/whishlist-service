@@ -7,7 +7,7 @@ from uuid import UUID
 
 from fastapi import Depends
 from pydantic import BaseModel
-from sqlmodel import Field, Relationship, SQLModel, Session, UniqueConstraint, select
+from sqlmodel import Field, Relationship, Session, SQLModel, UniqueConstraint, select
 
 from src.config.database import get_session
 from src.customer.data import CustomerModel
@@ -50,14 +50,20 @@ class FavoriteProductRepository:
     def __init__(self, session: Session):
         self.session = session
 
-    def get_customer_list(self, customer_external_id: UUID) -> List[FavoriteProductModel]:
+    def get_customer_list(
+        self,
+        customer_external_id: UUID
+    ) -> List[FavoriteProductModel]:
+        """
+        FIXME: Aqui deveria ser feita uma injeçao da classe CustomerModel,
+        mas n foi feita pois n decidi uma forma elegante sem referenciar
+        CustomerModel diretamente.
+        Essa é uma falha de design que deveria ser corrigida.
+        """
         query = select(
             FavoriteProductModel
         ).join(
-            CustomerModel, #FIXME: Aqui deveria ser feita uma injeçao da classe CustomerModel,
-                           # mas não foi feita pois nao decidi ua forma elegante sem referenciar
-                           # CustomerModel diretamente.
-                           # Essa é uma falha de design que deveria ser corrigida.
+            CustomerModel,
             FavoriteProductModel.customer_id == CustomerModel.id
         ).where(
             CustomerModel.external_id == customer_external_id
@@ -65,6 +71,41 @@ class FavoriteProductRepository:
         result = self.session.exec(query)
         return result.all()
 
+    def add_favorite(
+        self,
+        customer_id: UUID,
+        product: ProductDTO
+    ) -> FavoriteProductModel:
+        customer_internal_id: int = self._load_customer(customer_id).id
+        favorite_product = FavoriteProductModel(
+            customer_id=customer_internal_id,
+            product_id=product.id,
+            title=product.title,
+            price=product.price,
+            image_url=product.image_url,
+            review_score=product.reviews_score
+        )
+        self.session.add(favorite_product)
+        self.session.commit()
+        self.session.refresh(favorite_product)
+        return favorite_product
 
-def get_favorite_repository(session: Session = Depends(get_session)) -> FavoriteProductRepository:
+
+    def _load_customer(self, customer_id: UUID) -> CustomerModel:
+        """
+        FIXME: Isso aqui causa uma query N+1.
+        Pode ser evitado mas não vou trabalhar nisso agora
+        """
+        query = select(
+            CustomerModel
+        ).where(
+             CustomerModel.external_id == customer_id
+        )
+        result = self.session.exec(query)
+        customer = result.one_or_none()
+        return customer
+
+def get_favorite_repository(
+    session: Session = Depends(get_session)
+) -> FavoriteProductRepository:
     return FavoriteProductRepository(session)
