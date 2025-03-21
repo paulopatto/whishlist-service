@@ -3,6 +3,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
 
+from src.auth.middlewares import validate_token
 from src.favorites.data import (
     FavoriteProductRepository,
     ProductDTO,
