@@ -1,8 +1,8 @@
 import click
 import uvicorn
 
-from src.config.database import database_setup
 from src.config.envs import load_envs
+from src.config.tables import database_setup
 
 load_envs()
 
