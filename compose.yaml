@@ -24,5 +24,14 @@ services:
     ports:
       - "5432:5432"
 
+  product-api:
+    image: ghcr.io/paulopatto/fake-product-api:latest
+    env_file:
+      - .env
+    environment:
+      PORT: 8001
+    ports:
+      - "8001:8001"
+
 volumes:
   postgres_data:

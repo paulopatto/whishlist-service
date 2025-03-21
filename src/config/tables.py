@@ -5,7 +5,7 @@ from sqlmodel import SQLModel
 from src.config.database import get_engine
 from src.config.logger import AppLog as log
 from src.customer.data import CustomerModel
-from src.product.data import FavoriteProductModel
+from src.favorites.data import FavoriteProductModel
 
 
 def database_setup():
